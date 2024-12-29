@@ -1,5 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
@@ -13,7 +11,6 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -100,3 +97,13 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
+tasks.register("generateGithubPages") {
+    dependsOn("wasmJsBrowserDistribution")
+    doLast {
+        val rootDirPath = project.rootDir.path
+        copy {
+            from("$rootDirPath/composeApp/build/dist/wasmJs/productionExecutable/.")
+            into("$rootDirPath/pages/")
+        }
+    }
+}
